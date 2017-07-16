@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
-from financialreportingdfformatted import getfinancialreportingdfformatted,save_sp500_stocks_info
+from financialreportingdfformatted import getfinancialreportingdf,getfinancialreportingdfformatted,save_sp500_stocks_info
 from eligibilitycheck import eligibilitycheck
 from futurepricing import generate_price_df
 from pandas_datareader import data as web
@@ -77,30 +77,40 @@ Additional:
 '''
 
 app.layout = html.Div([
-    html.H1('Value Investing'),
-    # html.Div([
-    #     dcc.Markdown(children=markdown_text)
-    # ]),
-    # First let users choose stocks
-    html.H5('1) Choose a stock or lists of them (to be developed)'),
-    dcc.Dropdown(
-        id='my-dropdown',
-        # options=[
-        #     {'label': 'Coke', 'value': 'COKE'},
-        #     {'label': 'Tesla', 'value': 'TSLA'},
-        #     {'label': 'Apple', 'value': 'AAPL'}
-        # ],
-        options=save_sp500_stocks_info(),
-        value='COKE'
-    ),
-    html.H5('2) See the 5 year trends of your stocks'),
-    dcc.Graph(id='my-graph'),
-    html.H5('3) Received data scraped from the stocks financial reporting (balancesheet, incomestatement)'),
-    html.Table(id='my-table'),
-    html.H5('4) Using the tips from Warren Buffett, here are the reasons why this stocks might not be suitable'),
-    html.Table(id='reason-list'),
-    html.H5('5) Here are the expected future price based on discount rate and margin rate'),
-    html.H6('Discount Rate'),
+    html.Div([
+
+        html.H1('Value Investing'),
+        # html.Div([
+        #     dcc.Markdown(children=markdown_text)
+        # ]),
+        # First let users choose stocks
+        html.P('1) Choose a stock or lists of them (to be developed)'),
+        dcc.Dropdown(
+            id='my-dropdown',
+            # options=[
+            #     {'label': 'Coke', 'value': 'COKE'},
+            #     {'label': 'Tesla', 'value': 'TSLA'},
+            #     {'label': 'Apple', 'value': 'AAPL'}
+            # ],
+            options=save_sp500_stocks_info(),
+            value='coke'
+        ),
+        html.P('2) See the 5 year trends of your stocks'),
+        dcc.Graph(id='my-graph'),
+        html.P('')
+
+    ],style={'width': '49%', 'display': 'inline-block'}),
+    html.Div([
+        html.P('3) Received data scraped from the stocks financial reporting (balancesheet, incomestatement)'),
+        html.Table(id='my-table'),
+        html.P(''),
+        html.P('4) Using the tips from Warren Buffett, here are the reasons why this stocks might not be suitable'),
+        html.Table(id='reason-list'),
+        html.P(''),
+        html.P('5) Here are the expected future price based on discount rate and margin rate')   ,
+        html.P('')
+    ], style={'width': '49%', 'float': 'right', 'display': 'inline-block'}),
+    html.P('Discount Rate & Margin Rate'),
     dcc.Slider(
         id='discountrate-slider',
         min=0,
@@ -109,7 +119,7 @@ app.layout = html.Div([
         step=0.05,
         marks={i: '{}'.format(i) for i in np.arange(0, 1, 0.05)}
     ),
-    html.H6('Margin Rate'),
+    html.P(''),
     dcc.Slider(
         id='marginrate-slider',
         min=0,
@@ -118,6 +128,7 @@ app.layout = html.Div([
         step=0.05,
         marks={i: '{}'.format(i) for i in np.arange(0, 1, 0.05)}
     ),
+    html.P(''),
     html.Table(id='expected-future-price-table')
 ])
 
@@ -142,11 +153,11 @@ def update_graph(selected_dropdown_value):
 def generate_table(selected_dropdown_value,max_rows=10):
     global financialreportingdf # Needed to modify global copy of financialreportingdf
     financialreportingdf = getfinancialreportingdfformatted(selected_dropdown_value.lower()).reset_index()
-    
+    financialreportingwritten = getfinancialreportingdf(selected_dropdown_value)
     # Header
-    return [html.Tr([html.Th(col) for col in financialreportingdf.columns])] + [html.Tr([
-        html.Td(round(financialreportingdf.iloc[i][col],2)) for col in financialreportingdf.columns
-    ]) for i in range(min(len(financialreportingdf), max_rows))]
+    return [html.Tr([html.Th(col) for col in financialreportingwritten.columns])] + [html.Tr([
+        html.Td(financialreportingwritten.iloc[i][col]) for col in financialreportingwritten.columns
+    ]) for i in range(min(len(financialreportingwritten), max_rows))]
 
     
 # for the reason-list

@@ -5,8 +5,7 @@ import requests
 
 from format import format
 
-# Getting financial reporting df
-def getfinancialreportingdfformatted(ticker):
+def getfinancialreportingdf(ticker):
 
     # try:
     urlfinancials = 'http://www.marketwatch.com/investing/stock/'+ticker+'/financials'
@@ -59,6 +58,11 @@ def getfinancialreportingdfformatted(ticker):
     df= pd.DataFrame({'eps': eps,'epsgrowth': epsgrowth,'netincome': netincome,'shareholderequity': shareholderequity,'roa': 
                   roa,'longtermdebt': longtermdebt,'interestexpense': interestexpense,'ebitda': ebitda},index=[2012,2013,2014,2015,2016])
 
+    return df
+
+# Getting financial reporting df
+def getfinancialreportingdfformatted(ticker):
+    df = getfinancialreportingdf(ticker)
     # Format all the number in dataframe
     dfformatted = df.apply(format)
 
