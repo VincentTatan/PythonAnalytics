@@ -43,22 +43,38 @@ def getfinancialreportingdf(ticker):
             longtermdebtlist.append( [td.text for td in title.findNextSiblings(attrs={'class': 'valueCell'}) if td.text])
 
     # Variables        
-    eps = epslist[0]
-    epsgrowth = epslist[1]
-    netincome = netincomelist[0]
-    shareholderequity = equitylist[0]
-    roa = equitylist[1]
+    # eps = epslist[0]
+    # epsgrowth = epslist[1]
+    # netincome = netincomelist[0]
+    # shareholderequity = equitylist[0]
+    # roa = equitylist[1]
 
-    longtermdebt = longtermdebtlist[0]
-    interestexpense = interestexpenselist[0]
-    ebitda = ebitdalist[0]
+    # longtermdebt = longtermdebtlist[0]
+    # interestexpense = interestexpenselist[0]
+    # ebitda = ebitdalist[0]
+
+    eps = getelementinlist(epslist,0)
+    epsgrowth = getelementinlist(epslist,1)
+    netincome = getelementinlist(netincomelist,0)
+    shareholderequity = getelementinlist(equitylist,0)
+    roa = getelementinlist(equitylist,1)
+
+    longtermdebt = getelementinlist(longtermdebtlist,0)
+    interestexpense =  getelementinlist(interestexpenselist,0)
+    ebitda = getelementinlist(ebitdalist,0)
     # Don't forget to add in roe, interest coverage ratio
 
     ## Make it into Dataframes
     df= pd.DataFrame({'eps': eps,'epsgrowth': epsgrowth,'netincome': netincome,'shareholderequity': shareholderequity,'roa': 
-                  roa,'longtermdebt': longtermdebt,'interestexpense': interestexpense,'ebitda': ebitda},index=[2012,2013,2014,2015,2016])
+                  roa,'longtermdebt': longtermdebt,'interestexpense': interestexpense,'ebitda': ebitda},index=[2013,2014,2015,2016,2017])
 
     return df
+
+def getelementinlist(list,element):
+    try:
+        return list[element]
+    except:
+        return '-'
 
 # Getting financial reporting df
 def getfinancialreportingdfformatted(ticker):
@@ -104,11 +120,50 @@ def save_sp500_stocks_info():
     
     stocks_info_df = pd.DataFrame(stocks_info).T
     stocks_info_df.columns=['tickers','security','gics_industry','gics_sub_industry']
-    stocks_info_df['labels'] = stocks_info_df[['security', 'gics_industry','gics_sub_industry']].apply(lambda x: ' '.join(x), axis=1)
+    stocks_info_df['seclabels'] = 'SP500'
+    stocks_info_df['labels'] = stocks_info_df[['tickers','security', 'gics_industry','gics_sub_industry','seclabels']].apply(lambda x: ' '.join(x), axis=1)
 
     # Create a list of dict based on tickers and labels
     dictlist = []
     for index, row in stocks_info_df.iterrows():
         print("there you go")
         dictlist.append({'value':row['tickers'], 'label':row['labels']})
+    return dictlist
+
+# This will keep tickers from russell
+def save_russell_info():
+    dfrussel=pd.read_csv('C:/Users/vintatan/Desktop/Investment/RussellandData.csv',index_col='Symbol')
+    dfrussel['tickers'] = dfrussel.index.str.upper()
+    dfrussel['security'] = dfrussel.Description.str.title()
+    dfrussel['gics_industry'] = dfrussel.Sector.str.lower()
+    dfrussel['gics_sub_industry'] = dfrussel.Industry.str.lower()
+    dfrussel['seclabels'] = 'RUSSELL'
+
+    dfrussel['labels'] = dfrussel[['tickers','security','gics_industry','gics_sub_industry','seclabels']].apply(lambda x: ' '.join(x), axis=1)
+
+    dictlist = []
+    for index, row in dfrussel.iterrows():
+        print("there you go")
+        dictlist.append({'value':row['tickers'], 'label':row['labels']})
+    return dictlist
+
+# self append
+def save_self_stocks_info():
+    dictlist = []
+
+    dictlist.append({'value':'ajbu', 'label':'AJBU Keppel DC Reit Data REITS SA'})
+    dictlist.append({'value':'gme', 'label':'GME Game Stop Corp SA'})
+    dictlist.append({'value':'aeg', 'label':'AEG Aegon Insurance SA'})
+    dictlist.append({'value':'ntic', 'label':'NTIC Northern Technologies International SA'})
+    dictlist.append({'value':'sq', 'label':'SQ Square SA'})
+    dictlist.append({'value':'kbsty', 'label':'Kobe steel'})
+    dictlist.append({'value':'NESN', 'label':'Nestle'})
+    dictlist.append({'value':'BN', 'label':'Danone'})
+
+
+
+
+
+
+
     return dictlist

@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
-from financialreportingdfformatted import getfinancialreportingdf,getfinancialreportingdfformatted,save_sp500_stocks_info
+from financialreportingdfformatted import getfinancialreportingdf,getfinancialreportingdfformatted,save_sp500_stocks_info,save_russell_info,save_self_stocks_info
 from eligibilitycheck import eligibilitycheck
 from futurepricing import generate_price_df
 from pandas_datareader import data as web
@@ -92,14 +92,14 @@ app.layout = html.Div([
             #     {'label': 'Tesla', 'value': 'TSLA'},
             #     {'label': 'Apple', 'value': 'AAPL'}
             # ],
-            options=save_sp500_stocks_info(),
+            options=save_sp500_stocks_info()+save_russell_info()+save_self_stocks_info(),
             value='coke'
         ),
         html.P('2) See the 5 year trends of your stocks'),
         dcc.Graph(id='my-graph'),
         html.P('')
 
-    ],style={'width': '49%', 'display': 'inline-block'}),
+    ],style={'width': '40%', 'display': 'inline-block'}),
     html.Div([
         html.P('3) Received data scraped from the stocks financial reporting (balancesheet, incomestatement)'),
         html.Table(id='my-table'),
@@ -109,7 +109,7 @@ app.layout = html.Div([
         html.P(''),
         html.P('5) Here are the expected future price based on discount rate and margin rate')   ,
         html.P('')
-    ], style={'width': '49%', 'float': 'right', 'display': 'inline-block'}),
+    ], style={'width': '55%', 'float': 'right', 'display': 'inline-block'}),
     html.P('Discount Rate & Margin Rate'),
     dcc.Slider(
         id='discountrate-slider',
@@ -138,8 +138,9 @@ app.layout = html.Div([
 def update_graph(selected_dropdown_value):
     global stockpricedf # Needed to modify global copy of stockpricedf
     stockpricedf = web.DataReader(
-        selected_dropdown_value, data_source='google',
-        start=dt(2012, 1, 1), end=dt.now())
+        selected_dropdown_value, data_source='yahoo',
+        start=dt(2013, 1, 1), end=dt.now())
+    print stockpricedf.head();
     return {
         'data': [{
             'x': stockpricedf.index,
@@ -153,7 +154,9 @@ def update_graph(selected_dropdown_value):
 def generate_table(selected_dropdown_value,max_rows=10):
     global financialreportingdf # Needed to modify global copy of financialreportingdf
     financialreportingdf = getfinancialreportingdfformatted(selected_dropdown_value.lower()).reset_index()
-    financialreportingwritten = getfinancialreportingdf(selected_dropdown_value)
+    financialreportingwritten = getfinancialreportingdf(selected_dropdown_value).reset_index()
+    financialreportingwritten[['roe','interestcoverageratio']] = np.round(financialreportingdf[['roe','interestcoverageratio']],2)
+
     # Header
     return [html.Tr([html.Th(col) for col in financialreportingwritten.columns])] + [html.Tr([
         html.Td(financialreportingwritten.iloc[i][col]) for col in financialreportingwritten.columns
