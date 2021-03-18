@@ -123,7 +123,7 @@ patsy==0.4.0
 peewee==2.8.0
 pep8==1.7.0
 pickleshare==0.5
-Pillow==3.1.0
+Pillow==8.1.1
 plotly==2.0.11
 ply==3.8
 prettytable==0.7.2
