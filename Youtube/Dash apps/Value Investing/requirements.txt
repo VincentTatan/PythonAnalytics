@@ -137,7 +137,7 @@ pycparser==2.14
 pycrypto==2.6.1
 pydotplus==2.0.2
 pyflakes==1.0.0
-Pygments==2.1
+Pygments==2.7.4
 pylint==1.6.4
 pyOpenSSL==0.15.1
 pyparsing==2.1.10
