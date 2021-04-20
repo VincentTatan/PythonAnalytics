@@ -188,7 +188,7 @@ tweepy==3.5.0
 twitter==1.17.1
 unicodecsv==0.14.1
 webencodings==0.5
-Werkzeug==0.11.3
+Werkzeug==0.15.3
 wrapt==1.10.8
 WTForms==2.1
 xlrd==0.9.4
