@@ -130,7 +130,7 @@ prettytable==0.7.2
 protobuf==3.0.0
 psutil==3.4.2
 PuLP==1.6.5
-py==1.4.31
+py==1.10.0
 pyasn1==0.1.9
 pycosat==0.6.1
 pycparser==2.14
