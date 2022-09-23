@@ -127,7 +127,7 @@ Pillow==3.1.0
 plotly==2.0.11
 ply==3.8
 prettytable==0.7.2
-protobuf==3.0.0
+protobuf==3.18.3
 psutil==3.4.2
 PuLP==1.6.5
 py==1.4.31
