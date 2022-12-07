@@ -20,7 +20,7 @@ boto==2.33.0
 botocore==0.73.0
 Bottleneck==1.0.0
 cdecimal==2.3
-certifi==2017.1.23
+certifi==2022.12.7
 cffi==1.2.1
 click==6.7
 click-plugins==1.0.3
